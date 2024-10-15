@@ -3,8 +3,8 @@ import subprocess
 from Bio import AlignIO
 from ribosome_exit_tunnel.data_access import *
 import csv
-from ribosome_exit_tunnel.get_coorinates import *
 from ribosome_exit_tunnel.choose_landmarks import *
+from ribosome_exit_tunnel.landmark import *
 import time
 
 # This script is for uL4 only - for now
@@ -36,9 +36,10 @@ for i in range(alignment.get_alignment_length()):
     most_common = find_conserved(alignment[:,i], conserved_threshold)
     
     if (most_common is not None):
-        conserved_positions.append((i,most_common))
+        conserved_positions.append(Landmark(i,most_common))
         
-conserved_positions = cherry_pick('uL4' ,alignment[0], conserved_positions, distance_threshold)
+# TODO continue refactoring from here
+conserved_positions = cherry_pick('uL4', alignment[0], conserved_positions, distance_threshold)
 
 with open("data/output/alignment_conserved.csv", mode='w', newline='') as file:
     writer = csv.DictWriter(file, fieldnames=["chain", "position"])
@@ -46,7 +47,7 @@ with open("data/output/alignment_conserved.csv", mode='w', newline='') as file:
     if file.tell() == 0:
         writer.writeheader()
     
-    writer.writerows([{'chain': 'uL4', 'position': obj} for obj in conserved_positions])
+    writer.writerows([{'chain': obj.name, 'position': obj} for i, obj in enumerate(conserved_positions)])
 
 rows = []
 parents = []
@@ -60,12 +61,18 @@ for i, seq in enumerate(alignment[0:50]):
     parents.append(parent)
     
     for i, pos in enumerate(conserved_positions):
-        val = map_to_orignal(seq, pos[0])
+        val = map_to_original(seq, pos.position)
         
         if val is not None:
-            coords = get_landmark_coordinates((f'uL4-{i}', pos[1], val+1), chain, parent)
+            landmark = Landmark(val, pos.residue, f'uL4-{i}')
+            coords = landmark.get_landmark_coordinates(chain, parent)
         
         if coords is not None:
+            landmark = coords["landmark"]
+            coords = {  "parent_id": parent, 
+                        "landmark": landmark.name, 
+                        "residue": landmark, 
+                        "x": coords['x'], "y": coords['y'], "z": coords['z']}
             rows.append(coords)
         
 with open("data/output/landmarks.csv", mode='w', newline='') as file:
@@ -108,7 +115,7 @@ for i in range(alignment.get_alignment_length()):
     most_common = find_conserved(alignment[:,i], conserved_threshold)
     
     if (most_common is not None):
-        conserved_positions.append((i,most_common))
+        conserved_positions.append(Landmark(i,most_common))
     
         
 conserved_positions = cherry_pick('uL22', alignment[0], conserved_positions, distance_threshold)
@@ -119,7 +126,7 @@ with open("data/output/alignment_conserved.csv", mode='a', newline='') as file:
     if file.tell() == 0:
         writer.writeheader()
     
-    writer.writerows([{'chain': 'uL22', 'position': obj} for obj in conserved_positions])
+    writer.writerows([{'chain': obj.name, 'position': obj} for obj in conserved_positions])
     
 rows = []
 
@@ -132,12 +139,18 @@ for i, seq in enumerate(alignment):
     parents.append(parent)
     
     for i, pos in enumerate(conserved_positions):
-        val = map_to_orignal(seq, pos[0])
+        val = map_to_original(seq, pos.position)
         
         if val is not None:
-            coords = get_landmark_coordinates((f'uL22-{i}', pos[1], val+1), chain, parent)
+            landmark = Landmark(val, pos.residue, f'uL22-{i}')
+            coords = landmark.get_landmark_coordinates(chain, parent)
         
         if coords is not None:
+            landmark = coords["landmark"]
+            coords = {  "parent_id": parent, 
+                        "landmark": landmark.name, 
+                        "residue": landmark, 
+                        "x": coords['x'], "y": coords['y'], "z": coords['z']}
             rows.append(coords)
             
 with open("data/output/landmarks.csv", mode='a', newline='') as file:
