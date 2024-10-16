@@ -7,6 +7,13 @@
             "request": "launch",
             "module": "ribosome_exit_tunnel.scripts.main",
             "justMyCode": true
+        },
+        {
+            "name": "Python: RNA",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "ribosome_exit_tunnel.scripts.poc_L5",
+            "justMyCode": true
         }
     ]
 }

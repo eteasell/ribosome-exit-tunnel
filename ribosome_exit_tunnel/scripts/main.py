@@ -38,7 +38,6 @@ for i in range(alignment.get_alignment_length()):
     if (most_common is not None):
         conserved_positions.append(Landmark(i,most_common))
         
-# TODO continue refactoring from here
 conserved_positions = cherry_pick('uL4', alignment[0], conserved_positions, distance_threshold)
 
 with open("data/output/alignment_conserved.csv", mode='w', newline='') as file:
@@ -63,9 +62,11 @@ for i, seq in enumerate(alignment[0:50]):
     for i, pos in enumerate(conserved_positions):
         val = map_to_original(seq, pos.position)
         
-        if val is not None:
-            landmark = Landmark(val, pos.residue, f'uL4-{i}')
-            coords = landmark.get_landmark_coordinates(chain, parent)
+        if val is None:
+            continue
+        
+        landmark = Landmark(val, pos.residue, f'uL4-{i}')
+        coords = landmark.get_landmark_coordinates(chain, parent)
         
         if coords is not None:
             landmark = coords["landmark"]

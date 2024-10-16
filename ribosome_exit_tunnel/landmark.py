@@ -19,7 +19,7 @@ class Landmark:
     # landmark = Landmark(56, 'G', 'uL4-1')
     # chain = 'C'
     # parent = '6vwl'
-    def get_landmark_coordinates(self, chain: str, parent: str) -> dict:
+    def get_landmark_coordinates(self, chain: str, parent: str, rna: bool = False) -> dict:
     
         try:
             file = f'data/mmcif/{parent}.cif'
@@ -39,8 +39,11 @@ class Landmark:
         atom_coords = []
         cmd.iterate_state(1, select, 'atom_coords.append((chain, resn, x, y, z))', space={'atom_coords': atom_coords})
     
-        # TODO: this will not work on nucleotides
-        if (len(atom_coords) == 0 or atom_coords[0][1] != seq3(self.residue).upper()):
+        if (len(atom_coords) == 0): 
+            return None
+        elif (rna and atom_coords[0][1] != self.residue.upper()): 
+            return None
+        elif (not rna and atom_coords[0][1] != seq3(self.residue).upper()):
             return None
     
         vec = np.zeros(3)

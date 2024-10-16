@@ -6,7 +6,8 @@ from Bio.Seq import Seq
 def cherry_pick(polymer: str, 
                 seq: Seq, 
                 conserved_positions: list[Landmark], 
-                threshold: float
+                threshold: float,
+                rna: bool = False
                 ) -> list[Landmark]:
     
     name_arr = seq.name.split('_')
@@ -20,7 +21,7 @@ def cherry_pick(polymer: str,
         if val is None: continue
         
         landmark = Landmark(val, pos.residue)
-        coords = landmark.get_landmark_coordinates(chain, parent)
+        coords = landmark.get_landmark_coordinates(chain, parent, rna)
         if coords is None: continue
         xyz = [coords['x'], coords['y'], coords['z']]
         
@@ -53,5 +54,5 @@ def map_to_original(sequence: Seq, position: int) -> int:
             if i == position:
                 return ungapped_position
             ungapped_position += 1
-            
+           
     return None

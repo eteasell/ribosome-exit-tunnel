@@ -39,11 +39,35 @@ def read_polymers_file(type):
         for obj in entities:
             if obj['parent_rcsb_id'] not in ids:
                 ids.add(obj['parent_rcsb_id'])
-                proteins.append({'parent_id': obj['parent_rcsb_id'], 'auth_asym_id': obj['auth_asym_id'], 'seq': obj['entity_poly_seq_one_letter_code']})
+                proteins.append({'parent_id': obj['parent_rcsb_id'], 
+                                 'auth_asym_id': obj['auth_asym_id'], 
+                                 'seq': obj['entity_poly_seq_one_letter_code_can']})
              
         return proteins   
     except:
         print("Error accessing polymer data.")
+        return None
+    
+def read_rna_file(type):
+    file_path = f"data/polymers/records_{type}rRNA.json"
+    with open(file_path, 'r', encoding='utf-8-sig') as file:
+        data = json.load(file)
+    
+    try:
+        entities = data[0]["collect(properties(m))"]
+        ids = set()
+        chains = []
+        for obj in entities:
+            if obj['parent_rcsb_id'] not in ids:
+                ids.add(obj['parent_rcsb_id'])
+                chains.append({'parent_id': obj['parent_rcsb_id'], 
+                               'auth_asym_id': obj['auth_asym_id'], 
+                               'tax_id': obj['src_organism_ids'],
+                               'seq': obj['entity_poly_seq_one_letter_code_can']})
+             
+        return chains   
+    except:
+        print("Error accessing RNA data.")
         return None
     
 # API call to get mmcif file
