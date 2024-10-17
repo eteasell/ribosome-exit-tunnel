@@ -41,12 +41,12 @@ for i in range(alignment.get_alignment_length()):
 conserved_positions = cherry_pick('uL4', alignment[0], conserved_positions, distance_threshold)
 
 with open("data/output/alignment_conserved.csv", mode='w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=["chain", "position"])
+    writer = csv.DictWriter(file, fieldnames=["chain", "residue", "position"])
     
     if file.tell() == 0:
         writer.writeheader()
     
-    writer.writerows([{'chain': obj.name, 'position': obj} for i, obj in enumerate(conserved_positions)])
+    writer.writerows([{'chain': obj.name, 'residue':obj.residue, 'position': obj.position} for i, obj in enumerate(conserved_positions)])
 
 rows = []
 parents = []
@@ -72,12 +72,13 @@ for i, seq in enumerate(alignment[0:50]):
             landmark = coords["landmark"]
             coords = {  "parent_id": parent, 
                         "landmark": landmark.name, 
-                        "residue": landmark, 
+                        "residue": landmark.residue, 
+                        "position": landmark.position,
                         "x": coords['x'], "y": coords['y'], "z": coords['z']}
             rows.append(coords)
         
 with open("data/output/landmarks.csv", mode='w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=["parent_id", "landmark", "residue", "x", "y", "z"])
+    writer = csv.DictWriter(file, fieldnames=["parent_id", "landmark", "residue", "position", "x", "y", "z"])
     
     if file.tell() == 0:
         writer.writeheader()
@@ -122,12 +123,12 @@ for i in range(alignment.get_alignment_length()):
 conserved_positions = cherry_pick('uL22', alignment[0], conserved_positions, distance_threshold)
 
 with open("data/output/alignment_conserved.csv", mode='a', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=["chain", "position"])
+    writer = csv.DictWriter(file, fieldnames=["chain", "residue", "position"])
     
     if file.tell() == 0:
         writer.writeheader()
     
-    writer.writerows([{'chain': obj.name, 'position': obj} for obj in conserved_positions])
+    writer.writerows([{'chain': obj.name, 'residue': obj.residue, 'position': obj.position} for obj in conserved_positions])
     
 rows = []
 
@@ -150,12 +151,13 @@ for i, seq in enumerate(alignment):
             landmark = coords["landmark"]
             coords = {  "parent_id": parent, 
                         "landmark": landmark.name, 
-                        "residue": landmark, 
+                        "residue": landmark.residue, 
+                        "position": landmark.position,
                         "x": coords['x'], "y": coords['y'], "z": coords['z']}
             rows.append(coords)
             
 with open("data/output/landmarks.csv", mode='a', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=["parent_id", "landmark", "residue", "x", "y", "z"])
+    writer = csv.DictWriter(file, fieldnames=["parent_id", "landmark", "residue", "position", "x", "y", "z"])
     
     if file.tell() == 0:
         writer.writeheader()

@@ -13,7 +13,7 @@ import csv
 
 chain = '28S'
 conserved_threshold = 0.9
-distance_threshold = 10
+distance_threshold = 5
 rerun_alignment = False
 
 if rerun_alignment:
@@ -84,12 +84,13 @@ for i, seq in enumerate(alignment[0:1]):
             landmark = coords["landmark"]
             coords = {  "parent_id": parent, 
                         "landmark": landmark.name, 
-                        "residue": landmark, 
+                        "residue": landmark.residue, 
+                        "position": landmark.position,
                         "x": coords['x'], "y": coords['y'], "z": coords['z']}
             rows.append(coords)
             
 with open("data/output/landmarks_rna.csv", mode='w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=["parent_id", "landmark", "residue", "x", "y", "z"])
+    writer = csv.DictWriter(file, fieldnames=["parent_id", "landmark", "residue", "position", "x", "y", "z"])
     
     if file.tell() == 0:
         writer.writeheader()
